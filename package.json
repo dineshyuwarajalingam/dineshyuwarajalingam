@@ -1,5 +1,5 @@
 {
-  "name": "my-node-app",
+  "name": "marqeta-card-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.10.0",
-    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
