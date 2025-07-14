@@ -2,13 +2,16 @@ import { Sequelize } from 'sequelize';
 import { DATABASE_URL } from '~/config';
 import { logger } from '~/utils/logger';
 
-const connectDB = async () => {
-  const sequelize = new Sequelize(DATABASE_URL);
+export const sequelize = new Sequelize(DATABASE_URL, {
+  dialect: 'postgres',
+});
 
+const connectDB = async () => {
   await new Promise((resolve, reject) => {
     sequelize
       .authenticate()
-      .then(() => {
+      .then(async () => {
+        await sequelize.sync({ force: false });
         logger.info('🟢 Database connected');
         resolve('🟢 Database connected');
       })
