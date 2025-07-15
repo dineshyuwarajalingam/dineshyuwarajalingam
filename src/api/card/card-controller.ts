@@ -31,7 +31,7 @@ export const findOrCreateCard = async (
 
     if (user && user?.toJSON()?.token) {
       const token = user?.toJSON()?.token;
-      const cardToken = user?.toJSON()?.cards?.[0]
+      const cardToken = user?.toJSON()?.cards?.[0];
       const marqetaUser = await marqetaClient.get(`/users/${token}`);
       const card = await marqetaClient.get(`/cards/${cardToken}`);
       return res.status(200).json({
@@ -59,6 +59,43 @@ export const findOrCreateCard = async (
     return res.status(201).json({
       user: newUser?.data,
       card: card?.data,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateCardStatusParamSchema = z.object({
+  status: z.enum(['INACTIVE', 'SUSPENDED', 'ACTIVE']),
+});
+
+export const updateCardStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const validation = updateCardStatusParamSchema.safeParse(req?.params);
+    const token = req?.query?.token;
+
+    if (!validation?.success) {
+      return res.status(400).json({
+        error: validation.error.format(),
+      });
+    }
+
+    if (!token) {
+      return res.status(400).json({
+        error: 'token cannot be empty',
+      });
+    }
+
+    const status = await marqetaClient.put(`/cards/${token}`, {
+      status: req?.params?.status,
+    });
+
+    return res.status(201).json({
+      status: status?.data,
     });
   } catch (err) {
     next(err);
