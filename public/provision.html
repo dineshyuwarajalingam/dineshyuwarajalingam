@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card to Apple Wallet</title>
+</head>
+<body>
+<h1>Add Your Card to Apple Wallet</h1>
+
+<button id="add-to-wallet">Add to Apple Wallet</button>
+
+<script>
+    document.getElementById('add-to-wallet').addEventListener('click', async () => {
+        if (!window.ApplePaySession) {
+            alert("Apple Pay is not available on this device/browser.");
+            return;
+        }
+
+        const cardToken = new URLSearchParams(window.location.search).get('cardToken');
+        if (!cardToken) {
+            alert("Missing cardToken in URL.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/apple-pay-wpp-jwt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ card_token: cardToken })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch Apple Pay JWT.');
+            }
+
+            const data = await response.json();
+
+            const jwt = data.data.jwt;  // Assuming your backend returns the JWT here
+
+            if (!jwt) {
+                alert('No JWT returned from backend');
+                return;
+            }
+
+            // Create the ApplePaySession with version 1 and your JWT
+            const session = new ApplePaySession(1, jwt);
+
+            // Handle merchant validation (required)
+            session.onvalidatemerchant = async (event) => {
+                // Call your server to validate merchant session
+                // For sandbox/testing you can directly pass event.validationURL to Apple Pay servers
+                // Here is a simplified placeholder:
+                const validationURL = event.validationURL;
+                const merchantSession = await fetch('/merchant-validation', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ validationURL })
+                }).then(r => r.json());
+
+                session.completeMerchantValidation(merchantSession);
+            };
+
+            // Handle other ApplePaySession events if needed:
+            session.onpaymentauthorized = (event) => {
+                // Payment authorized, you can process the payment token here
+                console.log('Payment authorized:', event.payment);
+                session.completePayment(ApplePaySession.STATUS_SUCCESS);
+            };
+
+            session.begin();  // Start the Apple Pay provisioning flow
+
+        } catch (err) {
+            console.error(err);
+            alert("Error adding card to Apple Wallet.");
+        }
+    });
+</script>
+</body>
+</html>
