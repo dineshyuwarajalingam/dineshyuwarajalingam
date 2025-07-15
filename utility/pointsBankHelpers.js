@@ -1,7 +1,18 @@
-const { PointsBank } = require('../db');
+const { PointsBank , ConversionRate} = require('../db');
 
-function convertAmountToPoints(amount) {
-    return Math.ceil(amount * 100); // Example: 1 point = $0.01
+async function getCurrentConversionRate() {
+    const rateRecord = await ConversionRate.findOne({
+        order: [['createdAt', 'DESC']]
+    });
+
+    if (!rateRecord) throw new Error('No conversion rate found');
+    return rateRecord.rate;
+}
+
+async function convertAmountToPoints(amount) {
+    const conversionRate = await getCurrentConversionRate();
+    console.log(`Current conversion rate: ${conversionRate}`);
+    return Math.ceil(amount * conversionRate);
 }
 
 async function getUserPoints(userToken) {
@@ -23,5 +34,6 @@ async function deductUserPoints(userToken, pointsToDeduct) {
 module.exports = {
     convertAmountToPoints,
     getUserPoints,
-    deductUserPoints
+    deductUserPoints,
+    getCurrentConversionRate
 };

@@ -17,13 +17,26 @@ const PointsBank = sequelize.define('PointsBank', {
     }
 });
 
+const ConversionRate = sequelize.define('ConversionRate', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    rate: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    }
+});
+
 async function initDb() {
     await sequelize.authenticate();
-    await PointsBank.sync();
+    await sequelize.sync();
 }
 
 module.exports = {
     sequelize,
     PointsBank,
+    ConversionRate,
     initDb
 };
