@@ -7,6 +7,12 @@ const findOrCreateCardBodySchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
   email: z.string(),
+  phone: z.string().optional(),
+  address1: z.string(),
+  city: z.string(),
+  state: z.string(),
+  postal_code: z.string(),
+  country: z.string(),
 });
 
 // TODO: for find to work, we need to be connect to a db
@@ -96,6 +102,37 @@ export const updateCardStatus = async (
 
     return res.status(201).json({
       status: status?.data,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const findCard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findOne({ where: { email: req?.query?.email } });
+
+    if (!user) {
+      return res.status(200).json({
+        message: 'user not found'
+      })
+    }
+
+    const userJson = user.toJSON();
+
+    const { token, cards } = userJson;
+    const [cardToken] = cards;
+
+    const marqetaUser = await marqetaClient.get(`/users/${token}`);
+    const card = await marqetaClient.get(`/cards/${cardToken}`);
+
+    return res.status(200).json({
+      user: marqetaUser?.data,
+      card: card?.data,
     });
   } catch (err) {
     next(err);
