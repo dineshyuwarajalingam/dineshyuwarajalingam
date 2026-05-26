@@ -5,6 +5,15 @@ import { User } from '~/models';
 import { clowd9, withAuth } from '~/utils/clowd9-client';
 import { clowd9Config } from '~/clowd9Config';
 
+const flattenClowd9Card = (raw: any) => {
+  const inner = raw?.card ?? {};
+  return {
+    ...inner,
+    last_four: inner?.card_ending,
+    expiration: '1229',
+  };
+};
+
 const onboardCardBodySchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
@@ -47,7 +56,7 @@ export const findOrCreateCard = async (
         clowd9.getCard({ card_id: cardId })
       );
 
-      return res.status(200).json({ user: user.toJSON(), card });
+      return res.status(200).json({ user: user.toJSON(), card: flattenClowd9Card(card) });
     }
 
     // onboard: creates customer + card in one call
@@ -170,7 +179,7 @@ export const findCard = async (
       clowd9.getCard({ card_id: cardId })
     );
 
-    return res.status(200).json({ user: user.toJSON(), card });
+    return res.status(200).json({ user: user.toJSON(), card: flattenClowd9Card(card) });
   } catch (err) {
     next(err);
   }

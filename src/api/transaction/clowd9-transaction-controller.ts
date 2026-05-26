@@ -35,8 +35,21 @@ export const getClowd9Transactions = async (
       order: [['createdAt', 'DESC']],
     });
 
+    const data = transactions.map((t) => {
+      const row = t.toJSON() as any;
+      return {
+        token: row.transaction_id,
+        type: 'gpa.credit',
+        created_time: row.createdAt,
+        amount: Number(row.amount),
+        card_id: row.card_id,
+        customer_id: row.customer_id,
+        payload: row.payload,
+      };
+    });
+
     return res.status(200).json({
-      transactions: transactions.map((t) => t.toJSON()),
+      transactions: { data, count: data.length },
     });
   } catch (err) {
     next(err);
