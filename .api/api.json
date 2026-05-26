@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "clowd9",
+      "source": "@clowd9/v1.11#1eip81hmo9vyex7",
+      "integrity": "sha512-+uVxpnBId2ZFYq1Jm9qlA/6DzU9f5bPHt44LTO8HBNhVWT3RJjA6Kn+VVhoHlwej6fvzeu3cdcwTyaWEn1fltg==",
+      "installerVersion": "6.1.3"
+    }
+  ]
+}
