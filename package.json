@@ -2,11 +2,11 @@
   "name": "marqeta-card-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "npx ts-node-dev index.ts"
+    "dev": "npx ts-node-dev -r tsconfig-paths/register server.ts"
   },
   "_moduleAliases": {
     "~": "dist/src"
@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@api/clowd9": "file:.api/apis/clowd9",
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
@@ -23,12 +24,14 @@
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
+    "uuidv7": "^1.2.1",
     "zod": "^4.0.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "nodemon": "^3.1.10",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   }
 }

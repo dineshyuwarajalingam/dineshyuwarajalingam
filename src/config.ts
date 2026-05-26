@@ -6,3 +6,6 @@ export const DATABASE_URL = process?.env?.DATABASE_URL;
 export const MARQETA = {
   API_TIMEOUT_SECONDS: process?.env?.MARQETA_TIMEOUT_SECONDS ?? 3000,
 };
+export const CLOWD9 = {
+  API_TIMEOUT_SECONDS: process?.env?.CLOWD9_TIMEOUT_SECONDS ?? 5000,
+};

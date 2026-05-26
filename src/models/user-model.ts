@@ -23,4 +23,12 @@ export const User = sequelize.define('User', {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
   },
+  customer_id: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  card_ids: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    allowNull: true,
+  },
 });
